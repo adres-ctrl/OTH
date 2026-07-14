@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First-Time Home Buyer Calculator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f4f5f7;color:#1a1a2e;font-size:14px;line-height:1.5}
+.wrap{max-width:1020px;margin:0 auto;padding:20px 14px 40px}
+.hdr{background:linear-gradient(135deg,#0f3460 0%,#16213e 100%);color:#fff;padding:28px 24px;border-radius:12px;margin-bottom:18px}
+.hdr h1{font-size:22px;font-weight:600;margin-bottom:5px}
+.hdr p{opacity:.8;font-size:13px}
+.card{background:#fff;border-radius:10px;padding:18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:14px}
+.igrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.igrp{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.igrp:last-child{margin-bottom:0}
+.ilbl{font-size:11px;color:#555;font-weight:500}
+.ifield{padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:14px;width:100%;color:#1a1a2e}
+.ifield:focus{outline:none;border-color:#0f3460}
+.ihint{font-size:10px;color:#aaa;margin-top:2px}
+.srow{margin-bottom:12px}
+.stop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.slbl{font-size:12px;color:#666}
+.sval{font-size:17px;font-weight:600;color:#1a1a2e}
+.sends{display:flex;justify-content:space-between;font-size:10px;color:#bbb;margin-top:2px}
+.snote{font-size:11px;color:#aaa;margin-top:3px}
+input[type=range]{width:100%;accent-color:#0f3460}
+.trow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.tbtn{padding:7px 16px;border:1px solid #ddd;background:#fff;border-radius:7px;cursor:pointer;font-size:12px;color:#666;transition:all .15s}
+.tbtn.on{background:#0f3460;color:#fff;border-color:#0f3460;font-weight:500}
+.freq-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.fbtn{padding:7px 16px;border:1px solid #ddd;background:#fff;border-radius:7px;cursor:pointer;font-size:12px;color:#666;transition:all .15s}
+.fbtn.on{background:#1a6b4a;color:#fff;border-color:#1a6b4a;font-weight:500}
+.abox{border-radius:8px;padding:11px 14px;font-size:12px;margin-bottom:12px;line-height:1.6}
+.abox-warn{background:#fff3e0;border:1px solid #ffcc80;color:#bf360c}
+.abox-info{background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1}
+.abox-good{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}
+.abox-trap{background:#fbe9e7;border:1.5px solid #ef9a9a;color:#b71c1c;font-weight:500}
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.mc{border-radius:8px;padding:11px;border:1px solid #eee}
+.mc-n{background:#f8f9fa}
+.mc-w{background:#fff8e1;border-color:#ffe082}
+.mc-g{background:#e8f5e9;border-color:#a5d6a7}
+.mc-b{background:#e3f2fd;border-color:#90caf9}
+.mc-r{background:#fce4ec;border-color:#f48fb1}
+.mc-teal{background:#e0f2f1;border-color:#80cbc4}
+.ml{font-size:10px;color:#888;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.mv{font-size:17px;font-weight:600;color:#1a1a2e}
+.mv-w{color:#e65100}
+.mv-g{color:#2e7d32}
+.mv-b{color:#1565c0}
+.mv-r{color:#c62828}
+.mv-teal{color:#00695c}
+.msub{font-size:10px;color:#bbb;margin-top:2px}
+.sccards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:580px){.sccards{grid-template-columns:1fr}}
+.sc{border-radius:10px;padding:14px;border:1px solid #ddd}
+.sc-fha{border-color:#ef9a9a;background:#fce4ec}
+.sc-refi{border:2px solid #a5d6a7;background:#e8f5e9}
+.sc-conv{border-color:#90caf9;background:#e3f2fd}
+.sc-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.sc-fha .sc-title{color:#b71c1c}
+.sc-refi .sc-title{color:#1b5e20}
+.sc-conv .sc-title{color:#0d47a1}
+.scrow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07);font-size:11px}
+.scrow:last-child{border:none}
+.scl{color:#666}
+.scv{font-weight:500;color:#1a1a2e}
+.scv-g{color:#2e7d32;font-weight:600}
+.scv-r{color:#c62828}
+.scv-teal{color:#00695c;font-weight:600}
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:#666;align-items:center}
+.ld{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:right;padding:5px 7px;font-size:9px;color:#999;border-bottom:1.5px solid #e0e0e0;font-weight:600;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:5px 7px;border-bottom:1px solid #f3f3f3;text-align:right;color:#1a1a2e;white-space:nowrap}
+td:first-child{text-align:left;color:#777;font-size:10px}
+tr.refi-yr td{background:#e8f5e9}
+tr.mip-yr td{background:#fff8e1}
+tr.done td{background:#f0f4f8}
+td.mip-live{color:#e65100}
+td.mip-dead{color:#2e7d32;font-weight:500}
+.milestone{font-size:10px;font-weight:600;padding:4px 7px}
+.edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:540px){.edu-grid{grid-template-columns:1fr}}
+.edu-col ul{font-size:12px;color:#444;line-height:1.9;padding-left:16px}
+.edu-col strong{color:#1a1a2e}
+.edu-hdr{font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 10px;border-radius:5px;display:inline-block}
+.edu-hdr-fha{background:#fce4ec;color:#b71c1c}
+.edu-hdr-conv{background:#e3f2fd;color:#0d47a1}
+hr{border:none;border-top:1px solid #eee;margin:14px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <h1>🏠 First-Time Home Buyer Calculator</h1>
+  <p>Compare FHA and conventional loan paths, track PMI/MIP costs, and find the right time to refinance into a better deal.</p>
+</div>
+
+<!-- INPUTS -->
+<div class="card">
+  <p class="card-title">Your purchase</p>
+  <div class="igrid">
+
+    <div>
+      <div class="srow">
+        <div class="stop"><span class="slbl">Purchase price</span><span class="sval" id="v-price">$350,000</span></div>
+        <input type="range" id="sl-price" min="100000" max="750000" step="5000" value="350000">
+        <div class="sends"><span>$100k</span><span>$750k</span></div>
+      </div>
+      <div class="srow">
+        <div class="stop"><span class="slbl">Down payment</span><span class="sval" id="v-down">3.5% — $12,250</span></div>
+        <input type="range" id="sl-down" min="3.5" max="25" step="0.5" value="3.5">
+        <div class="sends"><span>3.5% FHA min</span><span>25%</span></div>
+        <p class="snote" id="n-down">FHA minimum is 3.5% for credit score 580+. Gifts from family are allowed.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="igrp">
+        <label class="ilbl">FHA interest rate (%)</label>
+        <input type="number" id="inp-fha" class="ifield" value="6.75" step="0.05" min="3" max="15">
+        <span class="ihint">Ask your lender — FHA rates are typically slightly above conventional</span>
+      </div>
+      <div class="igrp">
+        <label class="ilbl">Loan term</label>
+        <div class="trow" id="term-row">
+          <button class="tbtn on" onclick="setTerm(30,this)">30 years</button>
+          <button class="tbtn" onclick="setTerm(15,this)">15 years</button>
+        </div>
+      </div>
+      <div class="igrp">
+        <label class="ilbl">Payment frequency</label>
+        <div class="freq-row">
+          <button class="fbtn on" onclick="setFreq('monthly',this)">Monthly</button>
+          <button class="fbtn" onclick="setFreq('biweekly',this)">Biweekly</button>
+        </div>
+        <span class="ihint" id="freq-hint">12 payments/year — standard schedule</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="igrp">
+        <label class="ilbl">Est. monthly property tax ($)</label>
+        <input type="number" id="inp-tax" class="ifield" value="275" step="25" min="0">
+        <span class="ihint">Check your county assessor website or ask your realtor</span>
+      </div>
+      <div class="igrp">
+        <label class="ilbl">Est. monthly homeowner insurance ($)</label>
+        <input type="number" id="inp-ins" class="ifield" value="150" step="10" min="0">
+        <span class="ihint">Get quotes — Florida averages are higher than most states</span>
+      </div>
+      <div class="igrp">
+        <label class="ilbl">Monthly HOA dues ($)</label>
+        <input type="number" id="inp-hoa" class="ifield" value="0" step="10" min="0">
+        <span class="ihint">Enter 0 if no HOA. HOA fees are billed monthly regardless of payment frequency.</span>
+      </div>
+      <div class="igrp" style="margin-top:4px">
+        <label class="ilbl" id="extra-lbl">Extra to principal per month</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="range" id="sl-extra" min="0" max="500" step="10" value="0" style="flex:1;accent-color:#1a6b4a">
+          <span style="font-size:16px;font-weight:600;color:#1a6b4a;white-space:nowrap;min-width:60px;text-align:right" id="v-extra">$0</span>
+        </div>
+        <div class="sends" style="margin-top:2px"><span>$0</span><span>$500</span></div>
+        <p class="snote" id="extra-note">Goes directly to principal every payment.</p>
+        <div id="extra-impact" style="display:none;margin-top:6px;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:7px 10px;font-size:11px;color:#1b5e20;line-height:1.5"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FHA SNAPSHOT -->
+<div class="card">
+  <p class="card-title">Your FHA loan — key numbers</p>
+  <div id="fha-limit-warn"></div>
+  <div class="mcards" id="fha-cards"></div>
+  <div id="mip-trap"></div>
+</div>
+
+<!-- COMPARISON SETTINGS -->
+<div class="card">
+  <p class="card-title">Conventional comparison &amp; refinance settings</p>
+  <div class="igrid">
+    <div>
+      <div class="igrp" style="margin-bottom:12px">
+        <label class="ilbl">Conventional rate (%) — for comparison &amp; future refi</label>
+        <input type="number" id="inp-conv" class="ifield" value="6.49" step="0.05" min="3" max="15">
+        <span class="ihint">Current 30yr avg: 6.49% · 15yr avg: 5.84% (Freddie Mac, June 25, 2026)</span>
+      </div>
+      <div class="igrp">
+        <label class="ilbl">Conventional PMI rate (%/yr)</label>
+        <input type="number" id="inp-pmi" class="ifield" value="0.80" step="0.05" min="0" max="3">
+        <span class="ihint">Auto-cancels at 80% LTV. Typical: 0.5%–1.2% based on credit &amp; down %</span>
+      </div>
+    </div>
+    <div>
+      <div class="srow">
+        <div class="stop"><span class="slbl">Refi closing costs (when eligible)</span><span class="sval" id="v-rc">$7,500</span></div>
+        <input type="range" id="sl-rc" min="2000" max="18000" step="250" value="7500">
+        <div class="sends"><span>$2k</span><span>$18k</span></div>
+        <p class="snote">Typical FL range: $7,500–$10,000. Request a Loan Estimate for your exact costs.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="card">
+  <p class="card-title">Three-path comparison</p>
+  <div id="refi-callout"></div>
+  <div class="sccards" id="sccards"></div>
+</div>
+
+<!-- CHART -->
+<div class="card">
+  <p class="card-title">Balance over time</p>
+  <div class="leg" id="leg"></div>
+  <div style="position:relative;width:100%;height:270px"><canvas id="bc"></canvas></div>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+  <p class="card-title">Year-by-year breakdown</p>
+  <p style="font-size:10px;color:#aaa;margin:0 0 10px">
+    <span style="background:#fce4ec;padding:1px 6px;border-radius:3px;color:#b71c1c">Red MIP</span> = still paying &nbsp;·&nbsp;
+    <span style="background:#e8f5e9;padding:1px 6px;border-radius:3px;color:#2e7d32">Green rows</span> = refi year or paid off &nbsp;·&nbsp;
+    <span style="background:#fff8e1;padding:1px 6px;border-radius:3px;color:#e65100">Yellow rows</span> = PMI/MIP event
+  </p>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th style="text-align:left">Year</th>
+      <th id="th-fha-pi">FHA P&I /mo</th><th>MIP /mo</th><th>FHA bal</th>
+      <th id="th-conv-pi">Conv P&I /mo</th><th>PMI /mo</th><th>Conv bal</th>
+      <th id="th-refi-pi">Refi path pmt</th><th>Refi bal</th>
+    </tr></thead>
+    <tbody id="ytb"></tbody>
+  </table>
+  </div>
+  <p style="font-size:10px;color:#bbb;margin:6px 0 0">P&I shown per payment period. MIP/PMI always monthly. Add tax + insurance + HOA for full housing cost.</p>
+</div>
+
+<!-- EDUCATION -->
+<div class="card">
+  <p class="card-title">FHA vs Conventional — what every first-time buyer should know</p>
+  <div class="edu-grid">
+    <div class="edu-col">
+      <div class="edu-hdr edu-hdr-fha">FHA Loans</div>
+      <ul>
+        <li>3.5% minimum down (credit 580+), 10% if 500–579</li>
+        <li><strong>1.75% upfront MIP</strong> rolled into your loan balance</li>
+        <li>Annual MIP: 0.55% for most 30yr loans</li>
+        <li><strong>MIP lasts the life of the loan</strong> if down &lt; 10%</li>
+        <li>More lenient debt-to-income ratios</li>
+        <li>Down payment gifts from family allowed</li>
+        <li>FHA loan limits vary by county (~$524k most FL counties)</li>
+      </ul>
+    </div>
+    <div class="edu-col">
+      <div class="edu-hdr edu-hdr-conv">Conventional Loans</div>
+      <ul>
+        <li>3% minimum (some programs) — typically 5%+</li>
+        <li>No upfront MIP — lower loan amount from day one</li>
+        <li>PMI: typically 0.5%–1.2% based on credit &amp; down</li>
+        <li><strong>PMI automatically cancels at 80% LTV</strong></li>
+        <li>Usually requires 620+ credit score</li>
+        <li>Lower rates with good credit vs FHA</li>
+        <li>No loan limits (conforming)</li>
+      </ul>
+    </div>
+  </div>
+  <hr>
+  <div class="abox abox-info" style="margin:0">
+    <strong>The smart strategy for most FHA borrowers:</strong> FHA gets you in the door, but plan to refinance to conventional once you hit 20% equity. That single move permanently eliminates MIP — often saving $100–$250/month for the rest of the loan. Making biweekly payments accelerates your path to that 20% milestone. Your table above shows exactly when that window opens.
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+var curTerm=30, curFreq='monthly', chartInst=null;
+
+function fmt(n){return Math.round(n).toLocaleString();}
+function fmtD(n){return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function moStr(mo){
+  var d=new Date(2026,6,1);
+  d.setMonth(d.getMonth()+mo);
+  return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();
+}
+function mPmt(P,ra,nm){var r=ra/12;if(r<1e-9)return P/nm;return P*r*Math.pow(1+r,nm)/(Math.pow(1+r,nm)-1);}
+
+function amortMO(bal,annRate,moPmt,maxMo){
+  var r=annRate/12,b=bal,ti=0,rows=[];
+  for(var m=1;m<=maxMo;m++){
+    if(b<0.01)break;
+    var iM=b*r,pM=Math.min(Math.max(moPmt-iM,0),b);
+    ti+=iM;b-=pM;rows.push({m:m,bal:b,int:iM,ti:ti});
+  }
+  return rows;
+}
+function amortBW(bal,annRate,bwPmt,maxPer){
+  var r=annRate/26,b=bal,ti=0,rows=[];
+  for(var m=1;m<=maxPer;m++){
+    if(b<0.01)break;
+    var iM=b*r,pM=Math.min(Math.max(bwPmt-iM,0),b);
+    ti+=iM;b-=pM;rows.push({m:m,bal:b,int:iM,ti:ti});
+  }
+  return rows;
+}
+function moToBW(mo){return Math.round(mo*26/12);}
+function bwToMo(bw){return Math.round(bw*12/26);}
+
+function balMO(rows,startBal,mo){
+  if(mo<=0)return Math.round(startBal);
+  if(mo>rows.length)return 0;
+  return Math.round(rows[mo-1].bal);
+}
+function balBW(rows,startBal,mo){
+  var bw=moToBW(mo);
+  if(bw<=0)return Math.round(startBal);
+  if(bw>rows.length)return 0;
+  return Math.round(rows[bw-1].bal);
+}
+function tiMO(rows,mo){
+  if(mo<=0)return 0;
+  var i=Math.min(mo,rows.length);
+  return rows[i-1].ti;
+}
+function tiBW(rows,mo){
+  var bw=Math.min(moToBW(mo),rows.length);
+  if(bw<=0)return 0;
+  return rows[bw-1].ti;
+}
+
+function getV(){
+  return{
+    price:    parseInt(document.getElementById('sl-price').value)||350000,
+    downPct:  parseFloat(document.getElementById('sl-down').value)/100||0.035,
+    fhaRate:  parseFloat(document.getElementById('inp-fha').value)/100||0.0675,
+    convRate: parseFloat(document.getElementById('inp-conv').value)/100||0.0649,
+    pmiRate:  parseFloat(document.getElementById('inp-pmi').value)/100||0.008,
+    taxMo:    parseFloat(document.getElementById('inp-tax').value)||275,
+    insMo:    parseFloat(document.getElementById('inp-ins').value)||150,
+    hoa:      parseFloat(document.getElementById('inp-hoa').value)||0,
+    extra:    parseFloat(document.getElementById('sl-extra').value)||0,
+    rc:       parseFloat(document.getElementById('sl-rc').value)||7500,
+    term:     curTerm,
+    bw:       curFreq==='biweekly'
+  };
+}
+
+function update(){
+  var v=getV();
+  var isBW=v.bw;
+  var termMo=v.term*12;
+  var pLbl=isBW?' /2wk':' /mo';
+  var pLblLong=isBW?' per 2 weeks':' per month';
+
+  // Display slider values
+  var downDollar=Math.round(v.price*v.downPct);
+  document.getElementById('v-price').textContent='$'+fmt(v.price);
+  document.getElementById('v-down').textContent=Math.round(v.downPct*1000)/10+'% — $'+fmt(downDollar);
+  document.getElementById('v-rc').textContent='$'+fmt(v.rc);
+  document.getElementById('v-extra').textContent='$'+fmt(v.extra)+(isBW?' /2wk':' /mo');
+  document.getElementById('extra-lbl').textContent='Extra to principal'+(isBW?' per biweekly period':' per month');
+  document.getElementById('extra-note').textContent=isBW
+    ?'Biweekly extra payments hit principal every 2 weeks — compounds faster than monthly.'
+    :'Extra payments accelerate equity growth and get you to 20% faster.';
+
+  // Table headers
+  document.getElementById('th-fha-pi').textContent='FHA P&I '+(isBW?'/2wk':'/mo');
+  document.getElementById('th-conv-pi').textContent='Conv P&I '+(isBW?'/2wk':'/mo');
+  document.getElementById('th-refi-pi').textContent='Refi pmt '+(isBW?'/2wk':'/mo');
+
+  var downNote=v.downPct<0.035?'FHA requires minimum 3.5% (credit 580+).':
+               v.downPct<0.1?'With less than 10% down, FHA MIP lasts the LIFE of the loan.':
+               v.downPct<0.2?'At 10%+ down, FHA MIP drops after 11 years.':
+               'At 20%+ down, no PMI required on conventional loans!';
+  document.getElementById('n-down').textContent=downNote;
+
+  // Core FHA numbers (all monthly basis for interest math)
+  var baseLoan   = v.price-downDollar;
+  var ufmip      = Math.round(baseLoan*0.0175);
+  var fhaLoan    = baseLoan+ufmip;
+  var ltv        = baseLoan/v.price;
+  var mipPct     = v.downPct>=0.10?0.005:0.0055;
+  var mipForLife = v.downPct<0.10;
+  var mipDurMo   = mipForLife?termMo:132;
+  var mipMo      = fhaLoan*mipPct/12;
+  var fhaPIMO    = mPmt(fhaLoan,v.fhaRate,termMo);
+  var convPIMO   = mPmt(baseLoan,v.convRate,termMo);
+  var convPMI_mo = baseLoan*v.pmiRate/12;
+  var target80   = v.price*0.80;
+
+  // Per-period display amounts
+  var fhaPIper   = isBW ? fhaPIMO/2  : fhaPIMO;
+  var convPIper  = isBW ? convPIMO/2 : convPIMO;
+  var mipPer     = isBW ? mipMo/2    : mipMo;
+  var pmiPer     = isBW ? convPMI_mo/2 : convPMI_mo;
+  var taxPer     = isBW ? v.taxMo/2  : v.taxMo;
+  var insPer     = isBW ? v.insMo/2  : v.insMo;
+  var extraPer   = v.extra; // already per-period as set on slider
+  // HOA always shown monthly (billed monthly regardless)
+  var hoaMo      = v.hoa;
+
+  // Total housing cost per period (P&I + extra + MIP + tax + ins, HOA monthly)
+  var fhaHousing = fhaPIper+extraPer+mipPer+taxPer+insPer+(isBW ? 0 : hoaMo);
+  var convHousing= convPIper+extraPer+(ltv>0.80?pmiPer:0)+taxPer+insPer+(isBW ? 0 : hoaMo);
+
+  // FHA loan limit warning
+  var warnEl=document.getElementById('fha-limit-warn');
+  if(baseLoan>524225){
+    warnEl.innerHTML='<div class="abox abox-warn">⚠️ <strong>FHA loan limit:</strong> Most Florida counties cap FHA loans at ~$524,225. Your loan of $'+fmt(baseLoan)+' may exceed this — check your county\'s limit at HUD.gov.</div>';
+  } else { warnEl.innerHTML=''; }
+
+  // FHA snapshot cards
+  var hoaCard = hoaMo>0
+    ? '<div class="mc mc-teal"><p class="ml">HOA dues</p><p class="mv mv-teal">$'+fmt(hoaMo)+'/mo</p><p class="msub">billed monthly, not in loan</p></div>'
+    : '';
+  var extraCard = extraPer>0
+    ? '<div class="mc mc-g"><p class="ml">Extra to principal</p><p class="mv mv-g">$'+fmtD(extraPer)+pLbl+'</p><p class="msub">reduces balance each payment</p></div>'
+    : '';
+  var totalSubNote = 'P&I'+(extraPer>0?' + extra':'')+' + MIP + tax + ins'+(hoaMo>0?' + HOA':'')+(isBW&&hoaMo>0?' (+ $'+fmt(hoaMo)+'/mo HOA)':'');
+  document.getElementById('fha-cards').innerHTML=
+    '<div class="mc mc-b"><p class="ml">Base loan</p><p class="mv mv-b">$'+fmt(baseLoan)+'</p><p class="msub">price − down payment</p></div>'+
+    '<div class="mc mc-w"><p class="ml">Upfront MIP</p><p class="mv mv-w">$'+fmt(ufmip)+'</p><p class="msub">1.75% rolled into loan</p></div>'+
+    '<div class="mc mc-w"><p class="ml">Total FHA loan</p><p class="mv mv-w">$'+fmt(fhaLoan)+'</p><p class="msub">base + upfront MIP</p></div>'+
+    '<div class="mc mc-r"><p class="ml">Monthly MIP</p><p class="mv mv-r">$'+fmt(mipMo)+'/mo</p><p class="msub">'+(mipPct*100).toFixed(2)+'%/yr · '+(mipForLife?'life of loan':'11 years')+'</p></div>'+
+    '<div class="mc mc-n"><p class="ml">Min P&I '+(isBW?'(biweekly)':'(monthly)')+'</p><p class="mv">$'+fmtD(fhaPIper)+pLbl+'</p><p class="msub">principal &amp; interest only</p></div>'+
+    extraCard+
+    hoaCard+
+    '<div class="mc mc-b" style="border:2px solid #1565c0"><p class="ml">Total housing cost</p><p class="mv mv-b" style="font-size:20px">$'+fmtD(fhaHousing)+pLbl+'</p><p class="msub">'+totalSubNote+'</p></div>';
+
+  // MIP trap warning
+  document.getElementById('mip-trap').innerHTML=mipForLife
+    ?'<div class="abox abox-trap">🚨 With less than 10% down, your FHA MIP of <strong>$'+fmt(mipMo)+'/month never automatically drops</strong> — it lasts the entire life of the loan. The only way to eliminate it is to <strong>refinance to a conventional loan</strong> once you reach 20% equity. This calculator shows exactly when that window opens.</div>'
+    :'<div class="abox abox-info">✓ With 10%+ down, FHA MIP drops after <strong>11 years</strong>. Refinancing to conventional earlier may also be beneficial if rates are favorable.</div>';
+
+  // Amortizations
+  var extraMOequiv = isBW ? v.extra*26/12 : v.extra;
+  var fhaRows, convRows, fhaPOmo, convPOmo;
+  if(isBW){
+    fhaRows  = amortBW(fhaLoan,  v.fhaRate,  fhaPIMO/2  + v.extra, (termMo+60)*26/12+200);
+    convRows = amortBW(baseLoan, v.convRate, convPIMO/2 + v.extra, (termMo+60)*26/12+200);
+    fhaPOmo  = bwToMo(fhaRows[fhaRows.length-1].m);
+    convPOmo = bwToMo(convRows[convRows.length-1].m);
+  } else {
+    fhaRows  = amortMO(fhaLoan,  v.fhaRate,  fhaPIMO  + v.extra, termMo+60);
+    convRows = amortMO(baseLoan, v.convRate, convPIMO + v.extra, termMo+60);
+    fhaPOmo  = fhaRows[fhaRows.length-1].m;
+    convPOmo = convRows[convRows.length-1].m;
+  }
+
+  // Extra payment impact — compare to baseline (no extra)
+  var impactEl=document.getElementById('extra-impact');
+  if(v.extra>0){
+    var baseRows, basePOmo;
+    if(isBW){
+      baseRows = amortBW(fhaLoan, v.fhaRate, fhaPIMO/2, (termMo+60)*26/12+200);
+      basePOmo = bwToMo(baseRows[baseRows.length-1].m);
+    } else {
+      baseRows = amortMO(fhaLoan, v.fhaRate, fhaPIMO, termMo+60);
+      basePOmo = baseRows[baseRows.length-1].m;
+    }
+    var moSaved = basePOmo - fhaPOmo;
+    var yrSaved = Math.floor(moSaved/12);
+    var remMo   = moSaved%12;
+    var timeStr = yrSaved>0 && remMo>0 ? yrSaved+' yr '+remMo+' mo'
+                : yrSaved>0            ? yrSaved+' yr'+(yrSaved!==1?'s':'')
+                :                        remMo+' month'+(remMo!==1?'s':'');
+    var intSaved = Math.round(baseRows[baseRows.length-1].ti - fhaRows[fhaRows.length-1].ti);
+    impactEl.style.display='block';
+    impactEl.innerHTML='<strong>+$'+fmt(v.extra)+(isBW?' /2wk':' /mo')+' saves '+timeStr+' off your FHA loan</strong> &nbsp;·&nbsp; $'+fmt(intSaved)+' less interest paid &nbsp;·&nbsp; Refi window opens '+(moSaved>0?'~'+moSaved+' months sooner':'sooner too');
+  } else {
+    impactEl.style.display='none';
+  }
+
+  function getFHAbal(mo){ return isBW?balBW(fhaRows,fhaLoan,mo):balMO(fhaRows,fhaLoan,mo); }
+  function getConvBal(mo){ return isBW?balBW(convRows,baseLoan,mo):balMO(convRows,baseLoan,mo); }
+  function getFHAti(mo){ return isBW?tiBW(fhaRows,mo):tiMO(fhaRows,mo); }
+
+  // When FHA hits 80% LTV
+  var refiEligMo=-1;
+  for(var i=0;i<fhaRows.length;i++){
+    if(fhaRows[i].bal<=target80){
+      refiEligMo = isBW ? bwToMo(fhaRows[i].m) : fhaRows[i].m;
+      break;
+    }
+  }
+  // When conv PMI drops
+  var pmiDropMo=-1;
+  for(var i=0;i<convRows.length;i++){
+    if(convRows[i].bal<=target80){
+      pmiDropMo = isBW ? bwToMo(convRows[i].m) : convRows[i].m;
+      break;
+    }
+  }
+
+  // FHA → refi scenario
+  var refiRows=null, refiPOmo=-1, refiPI2=0;
+  var refiTotalCost=0, fhaTotalCost=0;
+  if(refiEligMo>0){
+    var rBal     = getFHAbal(refiEligMo);
+    var rTermMo  = Math.max(termMo,240);
+    refiPI2      = mPmt(rBal, v.convRate, rTermMo);
+    if(isBW){
+      refiRows = amortBW(rBal, v.convRate, refiPI2/2+v.extra, rTermMo*26/12+200);
+      refiPOmo = refiEligMo + bwToMo(refiRows[refiRows.length-1].m);
+    } else {
+      refiRows = amortMO(rBal, v.convRate, refiPI2+v.extra, rTermMo+100);
+      refiPOmo = refiEligMo + refiRows[refiRows.length-1].m;
+    }
+    var fhaIntBefore = getFHAti(refiEligMo);
+    var mipBefore    = mipMo * refiEligMo;
+    var refiTI       = refiRows[refiRows.length-1].ti;
+    refiTotalCost    = fhaIntBefore + mipBefore + refiTI + v.rc;
+    var fhaTI        = fhaRows[fhaRows.length-1].ti;
+    var fhaMIPtotal  = mipMo*(mipForLife?fhaPOmo:Math.min(mipDurMo,fhaPOmo));
+    fhaTotalCost     = fhaTI + fhaMIPtotal;
+  }
+  var fhaTI2    = fhaRows[fhaRows.length-1].ti;
+  var fhaMIP2   = mipMo*(mipForLife?fhaPOmo:Math.min(mipDurMo,fhaPOmo));
+  var convTI    = convRows[convRows.length-1].ti;
+  var convPMItl = convPMI_mo*(pmiDropMo>0?pmiDropMo:0);
+
+  // Refi callout
+  var rcEl=document.getElementById('refi-callout');
+  if(refiEligMo>0){
+    var mipBE=mipMo>0?Math.round(v.rc/mipMo):999;
+    var netSaved=Math.round(fhaTotalCost-refiTotalCost);
+    rcEl.innerHTML='<div class="abox abox-good">🎯 <strong>Refi window opens '+moStr(refiEligMo)+'</strong> (month '+refiEligMo+(isBW?' — biweekly payments get you there faster':'')+') — balance hits $'+fmt(target80)+' (20% equity). Refinancing eliminates $'+fmt(mipMo)+'/mo MIP permanently. The $'+fmt(v.rc)+' refi cost is recovered in ~'+mipBE+' months. Net saved vs staying in FHA: <strong>+$'+fmt(netSaved)+'</strong>.</div>';
+  } else if(ltv<=0.80){
+    rcEl.innerHTML='<div class="abox abox-good">✓ You already have 20%+ equity — you may qualify for conventional with no PMI right now.</div>';
+  } else { rcEl.innerHTML=''; }
+
+  // Scenario cards
+  var refiPIper2 = refiPI2>0 ? (isBW?refiPI2/2:refiPI2) : 0;
+  var refiHousing2 = refiPIper2>0 ? refiPIper2+taxPer+insPer+(isBW?0:hoaMo) : 0;
+  document.getElementById('sccards').innerHTML=
+    '<div class="sc sc-fha">'+
+      '<p class="sc-title">FHA — keep forever</p>'+
+      '<div class="scrow"><span class="scl">P&I payment</span><span class="scv">$'+fmtD(fhaPIper)+pLbl+'</span></div>'+
+      '<div class="scrow"><span class="scl">MIP</span><span class="scv scv-r">$'+fmt(mipMo)+'/mo</span></div>'+
+      (hoaMo>0?'<div class="scrow"><span class="scl">HOA dues</span><span class="scv scv-teal">$'+fmt(hoaMo)+'/mo</span></div>':'')+
+      '<div class="scrow"><span class="scl">Total housing'+pLbl+'</span><span class="scv">$'+fmtD(fhaHousing)+'</span></div>'+
+      '<div class="scrow"><span class="scl">MIP duration</span><span class="scv scv-r">'+(mipForLife?'⚠️ Life of loan':'11 years')+'</span></div>'+
+      '<div class="scrow"><span class="scl">Payoff</span><span class="scv">'+moStr(fhaPOmo)+'</span></div>'+
+      '<div class="scrow"><span class="scl">Interest + MIP total</span><span class="scv">$'+fmt(fhaTI2+fhaMIP2)+'</span></div>'+
+    '</div>'+
+    '<div class="sc sc-refi">'+
+      '<p class="sc-title">FHA → Refi conventional ✓</p>'+
+      '<div class="scrow"><span class="scl">P&I now</span><span class="scv">$'+fmtD(fhaPIper)+pLbl+'</span></div>'+
+      '<div class="scrow"><span class="scl">P&I after refi</span><span class="scv scv-g">'+(refiPI2>0?'$'+fmtD(refiPIper2)+pLbl:'—')+'</span></div>'+
+      (hoaMo>0?'<div class="scrow"><span class="scl">HOA dues</span><span class="scv scv-teal">$'+fmt(hoaMo)+'/mo</span></div>':'')+
+      '<div class="scrow"><span class="scl">Refi eligible</span><span class="scv scv-g">'+(refiEligMo>0?moStr(refiEligMo):'Now')+'</span></div>'+
+      '<div class="scrow"><span class="scl">Payoff</span><span class="scv scv-g">'+(refiPOmo>0?moStr(refiPOmo):'—')+'</span></div>'+
+      '<div class="scrow"><span class="scl">Int + MIP + refi cost</span><span class="scv">$'+(refiTotalCost>0?fmt(refiTotalCost):'—')+'</span></div>'+
+      '<div class="scrow"><span class="scl">Net saved vs FHA forever</span><span class="scv scv-g">+'+(refiEligMo>0?'$'+fmt(Math.round(fhaTotalCost-refiTotalCost)):'—')+'</span></div>'+
+    '</div>'+
+    '<div class="sc sc-conv">'+
+      '<p class="sc-title">Conventional from day 1</p>'+
+      '<div class="scrow"><span class="scl">P&I payment</span><span class="scv">$'+fmtD(convPIper)+pLbl+'</span></div>'+
+      '<div class="scrow"><span class="scl">PMI (until 80% LTV)</span><span class="scv">$'+fmt(convPMI_mo)+'/mo</span></div>'+
+      (hoaMo>0?'<div class="scrow"><span class="scl">HOA dues</span><span class="scv scv-teal">$'+fmt(hoaMo)+'/mo</span></div>':'')+
+      '<div class="scrow"><span class="scl">Total housing'+pLbl+'</span><span class="scv">$'+fmtD(convHousing)+'</span></div>'+
+      '<div class="scrow"><span class="scl">PMI drops</span><span class="scv scv-g">'+(pmiDropMo>0?moStr(pmiDropMo):'N/A')+'</span></div>'+
+      '<div class="scrow"><span class="scl">Payoff</span><span class="scv">'+moStr(convPOmo)+'</span></div>'+
+      '<div class="scrow"><span class="scl">Interest + PMI total</span><span class="scv">$'+fmt(convTI+convPMItl)+'</span></div>'+
+    '</div>';
+
+  // Chart
+  var MAXMO=Math.max(fhaPOmo,convPOmo,refiPOmo>0?refiPOmo:0)+12;
+  var step=3,labels=[],dFHA=[],dConv=[],dRefi=[];
+  for(var mo=0;mo<=MAXMO;mo+=step){
+    labels.push(mo===0?'Now':(mo%60===0?'Yr '+Math.round(mo/12):''));
+    dFHA.push(getFHAbal(mo));
+    dConv.push(getConvBal(mo));
+    if(refiEligMo>0){
+      if(mo<refiEligMo) dRefi.push(getFHAbal(mo));
+      else {
+        var rmn=mo-refiEligMo;
+        var rb;
+        if(isBW){ var rbw=moToBW(rmn); rb=rbw<refiRows.length?Math.round(refiRows[rbw].bal):0; }
+        else { rb=rmn<refiRows.length?Math.round(refiRows[rmn].bal):0; }
+        dRefi.push(rb);
+      }
+    }
+  }
+  document.getElementById('leg').innerHTML=
+    '<span style="display:flex;align-items:center;gap:4px"><span class="ld" style="background:#c62828"></span>FHA forever</span>'+
+    (refiEligMo>0?'<span style="display:flex;align-items:center;gap:4px"><span class="ld" style="background:#2e7d32"></span>FHA → Refi conventional</span>':'')+
+    '<span style="display:flex;align-items:center;gap:4px"><span class="ld" style="background:#1565c0"></span>Conventional from day 1</span>';
+  if(chartInst)chartInst.destroy();
+  var ds=[
+    {label:'FHA',data:dFHA,borderColor:'#c62828',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.1,borderDash:[4,3]},
+    {label:'Conv',data:dConv,borderColor:'#1565c0',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.1,borderDash:[4,3]}
+  ];
+  if(refiEligMo>0) ds.splice(1,0,{label:'Refi',data:dRefi,borderColor:'#2e7d32',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,tension:0.1});
+  chartInst=new Chart(document.getElementById('bc'),{
+    type:'line',data:{labels:labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#aaa',font:{size:9},maxTicksLimit:12}},
+              y:{min:0,ticks:{color:'#aaa',font:{size:9},callback:function(v){return '$'+Math.round(v/1000)+'k';}}}}}
+  });
+
+  // Table
+  var ytb=document.getElementById('ytb');ytb.innerHTML='';
+  var maxYr=Math.ceil(Math.max(fhaPOmo,convPOmo,refiPOmo>0?refiPOmo:0)/12)+1;
+  var refiPosted=false,pmiPosted=false,mipDropPosted=false;
+
+  for(var yr=1;yr<=maxYr;yr++){
+    var moE=yr*12;
+    var fhaBal=getFHAbal(moE);
+    var convBal=getConvBal(moE);
+    var curMIP=(mipForLife||moE<=mipDurMo)?mipMo:0;
+    var curPMI=(pmiDropMo<0||moE<=pmiDropMo)?convPMI_mo:0;
+
+    var rfBal='—', rfPmt='—';
+    if(refiEligMo>0){
+      if(moE<refiEligMo){
+        rfBal='$'+fmt(getFHAbal(moE));
+        rfPmt='$'+fmtD(fhaPIper);
+      } else {
+        var rmn2=moE-refiEligMo;
+        var rb2;
+        if(isBW){ var rbw2=moToBW(rmn2); rb2=rbw2<refiRows.length?Math.round(refiRows[rbw2].bal):0; }
+        else { rb2=rmn2<refiRows.length?Math.round(refiRows[rmn2].bal):0; }
+        rfBal = rb2<1 ? '<span style="color:#2e7d32;font-weight:600">PAID</span>' : '$'+fmt(rb2);
+        rfPmt = '$'+fmtD(isBW?refiPI2/2:refiPI2)+pLbl;
+      }
+    }
+
+    var isRefiYr  =(refiEligMo>0&&moE>=refiEligMo&&!refiPosted);
+    var isPMIDrop =(pmiDropMo>0&&moE>=pmiDropMo&&!pmiPosted);
+    var isMIPDrop =(!mipForLife&&moE>=mipDurMo&&!mipDropPosted);
+    if(isRefiYr)  refiPosted=true;
+    if(isPMIDrop) pmiPosted=true;
+    if(isMIPDrop) mipDropPosted=true;
+
+    var tr=document.createElement('tr');
+    if(isRefiYr) tr.className='refi-yr';
+    else if(isPMIDrop||isMIPDrop) tr.className='mip-yr';
+    else if(fhaBal<1&&convBal<1) tr.className='done';
+
+    tr.innerHTML=
+      '<td>Yr '+yr+' ('+moStr((yr-1)*12).split(' ')[1]+')</td>'+
+      '<td>$'+fmtD(fhaPIper)+'</td>'+
+      '<td class="'+(curMIP>0?'mip-live':'mip-dead')+'">$'+fmtD(mipMo)+(curMIP===0?' ✓':'')+'</td>'+
+      '<td>'+(fhaBal<1?'<span style="color:#2e7d32;font-weight:600">PAID</span>':'$'+fmt(fhaBal))+'</td>'+
+      '<td>$'+fmtD(convPIper)+'</td>'+
+      '<td class="'+(curPMI>0?'mip-live':'mip-dead')+'">$'+fmtD(convPMI_mo)+(curPMI===0?' ✓':'')+'</td>'+
+      '<td>'+(convBal<1?'<span style="color:#2e7d32;font-weight:600">PAID</span>':'$'+fmt(convBal))+'</td>'+
+      '<td>'+rfPmt+'</td>'+
+      '<td>'+rfBal+'</td>';
+    ytb.appendChild(tr);
+
+    if(isRefiYr){
+      var m1=document.createElement('tr');
+      m1.innerHTML='<td colspan="9" class="milestone" style="background:#c8e6c9;color:#1b5e20;border-top:2px solid #4caf50">✓ REFI TO CONVENTIONAL — '+moStr(refiEligMo)+' · MIP of $'+fmt(mipMo)+'/mo eliminated permanently</td>';
+      ytb.appendChild(m1);
+    }
+    if(isPMIDrop){
+      var m2=document.createElement('tr');
+      m2.innerHTML='<td colspan="9" class="milestone" style="background:#fff9c4;color:#f57f17;border-top:2px solid #ffc107">✓ CONVENTIONAL PMI DROPS — '+moStr(pmiDropMo)+' · Saving $'+fmt(convPMI_mo)+'/mo automatically</td>';
+      ytb.appendChild(m2);
+    }
+    if(isMIPDrop){
+      var m3=document.createElement('tr');
+      m3.innerHTML='<td colspan="9" class="milestone" style="background:#fff9c4;color:#f57f17;border-top:2px solid #ffc107">✓ FHA MIP DROPS AFTER 11 YEARS — '+moStr(mipDurMo)+' · Saving $'+fmt(mipMo)+'/mo</td>';
+      ytb.appendChild(m3);
+    }
+    if(fhaBal<1&&convBal<1&&(refiEligMo<=0||rfBal.indexOf('PAID')>=0))break;
+  }
+}
+
+function setTerm(t,el){
+  curTerm=t;
+  document.querySelectorAll('#term-row .tbtn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  update();
+}
+function setFreq(f,el){
+  curFreq=f;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  document.getElementById('freq-hint').textContent=f==='biweekly'
+    ?'26 payments/year = 13 monthly payments — builds equity faster, reduces MIP period.'
+    :'12 payments/year — standard schedule.';
+  update();
+}
+
+['sl-price','sl-down','sl-extra','sl-rc'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',update);
+});
+['inp-fha','inp-conv','inp-pmi','inp-tax','inp-ins','inp-hoa'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',update);
+});
+update();
+</script>
+</body>
+</html>
